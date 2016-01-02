@@ -8,24 +8,17 @@ from tkFileDialog import askdirectory
 
 
 # Function to rename the file to a proper movie name
-def correct_name(raw_name):
-    names_to_strip = ["\\[.*\\]", "\\(.*\\)", "720p", "1080p", "x264",
-                      "[1|2][9|0]\\d{2}", "dvd\\.?rip", "xvid",
-                      "CD\\d+", "-axxo", "mp3", "hdtv", "divx",
-                      "sharkboy", "\\d{0,2}fps", "\\d{0,3}kbps",
-                      "hddvd", "torr?ent.", "extended", "WunSeeDee",
-                      "\\d{3,4}p", "Part\\d", "-", "YIFY", "x264",
-                      "BluRay", "mp4", "avi", "mkv", "m4v", "flv",
-                      "vob", "mpg", "SPARKS", "mpeg", "BrRip", "\\.\\.+",
-                      "BRRip", "AACETRG"]
-    for name in names_to_strip:
-        corrected_name = raw_name.replace(name, "")
-        corrected_name = re.sub(name, "", corrected_name)
-
-    corrected_name = corrected_name.strip()
-    corrected_name = corrected_name.replace(".", " ")
-
-    return corrected_name
+def correct_name(str):
+  names_list=["\\[.*\\]","\\(.*\\)","720p","1080p","x264","[1|2][9|0]\\d{2}","dvd\\.?rip","xvid","VPPV",
+              "CD\\d+","-axxo","mp3","hdtv","divx","sharkboy","\\d{0,2}fps","\\d{0,3}kbps","hddvd",
+              "torr?ent.","extended","WunSeeDee","\\d{3,4}p","Part\\d","-","YIFY","x264","BluRay",
+              "mp4","avi","mkv","m4v","flv","vob","mpg","SPARKS","mpeg","BrRip","\\.\\.+","BRRip","AACETRG"]
+  for temp in names_list:
+    str=str.replace(temp,"")
+    str=re.sub(temp,"",str)
+  str=str.strip()
+  str=str.replace("."," ")
+  return str
 
 
 # Function that send movie name as a paremeter and retrieves and
@@ -39,7 +32,7 @@ def get_results(search_parameter):
         "type": "movie"
     }
     response = requests.get(api_url, params=params)
-    print("json:\n%s" % response, json.dumps(response.json(), indent=4))
+    #print("json:\n%s" % response, json.dumps(response.json(), indent=4))
     response_data = response.json()
 
     if response_data["Response"] == "False":
@@ -56,17 +49,25 @@ def get_results(search_parameter):
     language = response_data.get("Language", "")
     rating = response_data.get("Rating", "")
 
-    print(movie_title, "\n", year, "\n", rated, "\n", runtime, "\n",
-          genre, "\n", director, "\n", actors, "\n", plot, "\n",
-          language, "\n", rating)
+    printing_string= movie_title+"\n"+year+"\n"+rated+"\n"+runtime+"\n"+genre+"\n"+director+"\n"+actors+"\n"+plot+"\n"+language+"\n"+rating
+    #print movie_title, "\n", year, "\n", rated, "\n", runtime, "\n", genre, "\n", director, "\n", actors, "\n", plot, "\n", language, "\n", rating
+    print printing_string.encode('ascii','ignore')
 
 
 if __name__ == "__main__":
     Tk().withdraw()
     mypath = askdirectory()
 
-    movie_files = os.listdir(mypath)
-
-    for files in movie_files:
-        get_results(correct_name(files))
-        print("\n\n" + "-" * 30 + "\n\n")
+    format_list=[".mov",".avi",".mpg",".mpeg",".mp4",".vob",".flv",".mkv",".m4v"]
+    for r,d,f in os.walk(mypath):
+        
+        for files in f:
+            correct_format=False
+            for formats in format_list:
+                if(files.endswith(formats)):
+                    correct_format=True
+                    break
+            
+            if(correct_format):
+                get_results(correct_name(files))
+                print("\n\n" + "-" * 30 + "\n\n")
