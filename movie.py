@@ -47,7 +47,7 @@ def get_results(search_parameter):
     actors = response_data.get("Actors", "")
     plot = response_data.get("Plot", "")
     language = response_data.get("Language", "")
-    rating = response_data.get("Rating", "")
+    rating = response_data.get("imdbRating", "")
 
     printing_string= movie_title+"\n"+year+"\n"+rated+"\n"+runtime+"\n"+genre+"\n"+director+"\n"+actors+"\n"+plot+"\n"+language+"\n"+rating
     #print movie_title, "\n", year, "\n", rated, "\n", runtime, "\n", genre, "\n", director, "\n", actors, "\n", plot, "\n", language, "\n", rating
